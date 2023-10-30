@@ -1,16 +1,25 @@
+"use client";
 import {
-  Grid,
-  Container,
-  Card,
-  CardContent,
-  Typography,
-  CardActions,
-  Button,
   Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Container,
+  Grid,
+  Typography,
 } from "@mui/material";
+import { DatabaseContext } from "@swift-buy/database";
+import { useContext, useEffect } from "react";
 
 export default function Home() {
   const products = [1, 2, 3, 4, 5, 6, 7];
+
+  const { database } = useContext(DatabaseContext);
+
+  useEffect(() => {
+    console.log(database?.collections.products)
+  }, [database]);
 
   return (
     <Box pt="32px">
