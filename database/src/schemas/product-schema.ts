@@ -11,9 +11,18 @@ export const productSchema: RxJsonSchema<ProductDocType> = {
       type: "string",
       maxLength: 16,
     },
+    image: {
+      type: "string",
+    },
     title: {
       type: "string",
     },
+    description: {
+      type: "string",
+    },
+    price: {
+      type: "number",
+    },
   },
-  required: ["id", "title"],
+  required: ["id", "title", "description", "price"],
 };

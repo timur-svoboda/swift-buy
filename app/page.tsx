@@ -8,48 +8,59 @@ import {
   Container,
   Grid,
   Typography,
+  CardMedia,
 } from "@mui/material";
-import { DatabaseContext } from "@swift-buy/database";
-import { useContext, useEffect } from "react";
+import { DatabaseContext, ProductDocument } from "@swift-buy/database";
+import { useContext, useEffect, useState } from "react";
+import Image from "next/image";
 
 export default function Home() {
-  const products = [1, 2, 3, 4, 5, 6, 7];
-
   const { database } = useContext(DatabaseContext);
+  const [products, setProducts] = useState<ProductDocument[]>([]);
 
   useEffect(() => {
-    console.log(database?.collections.products)
+    const fetchProcuts = async () => {
+      if (database) {
+        const products = await database.collections.products.find().exec();
+        setProducts(products);
+      }
+    };
+
+    fetchProcuts();
   }, [database]);
 
   return (
-    <Box pt="32px">
+    <Box pt="32px" pb="32px">
       <Container>
         <Grid container spacing={2}>
           {products.map((product) => (
-            <Grid item key={product} xs={3}>
-              <Card>
-                <CardContent>
-                  <Typography
-                    sx={{ fontSize: 14 }}
-                    color="text.secondary"
-                    gutterBottom
-                  >
-                    Word of the Day
+            <Grid item key={product.id} xs={3}>
+              <Card
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  height: "100%",
+                }}
+              >
+                <CardMedia>
+                  <Box position="relative" width="100%">
+                    <Box paddingTop="100%" />
+                    <Image src={product.image} alt="" fill sizes="25vw" />
+                  </Box>
+                </CardMedia>
+                <CardContent sx={{ flexGrow: 1 }}>
+                  <Typography variant="h5" component="div" gutterBottom>
+                    {product.title}
                   </Typography>
-                  <Typography variant="h5" component="div">
-                    asd
-                  </Typography>
-                  <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                    adjective
-                  </Typography>
-                  <Typography variant="body2">
-                    well meaning and kindly.
-                    <br />
-                    {'"a benevolent smile"'}
+                  <Typography variant="body2" gutterBottom>
+                    {product.description}
                   </Typography>
                 </CardContent>
-                <CardActions>
-                  <Button size="small">Learn More</Button>
+                <CardActions sx={{ justifyContent: "space-between" }}>
+                  <Typography variant="h5" component="div">
+                    ${product.price}
+                  </Typography>
+                  <Button variant="contained">Buy</Button>
                 </CardActions>
               </Card>
             </Grid>

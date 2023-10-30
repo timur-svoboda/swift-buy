@@ -1,8 +1,11 @@
-import { RxDatabase, RxCollection, RxJsonSchema, RxDocument } from "rxdb";
+import { RxDatabase, RxCollection, RxDocument } from "rxdb";
 
 export type ProductDocType = {
   id: string;
   title: string;
+  image: string;
+  description: string;
+  price: number;
 };
 
 export type ProductDocMethods = {};

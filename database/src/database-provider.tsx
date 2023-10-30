@@ -1,9 +1,11 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { createRxDatabase } from "rxdb";
 import { getRxStorageDexie } from "rxdb/plugins/storage-dexie";
 import { DatabaseContext } from "./database-context";
-import { Collections, Database } from "./types";
 import { productSchema } from "./schemas/product-schema";
+import { Collections, Database } from "./types";
+import { generateId } from "./utils/generate-id";
+import { demoProducts } from "./demo-data";
 
 export interface DatabaseProviderProps {
   children?: React.ReactNode;
@@ -14,25 +16,32 @@ export const DatabaseProvider = (props: DatabaseProviderProps) => {
 
   const [database, setDatabase] = useState<Database>();
 
-  const initDatabase = useCallback(async () => {
-    const database = await createRxDatabase<Collections>({
-      name: "database",
-      storage: getRxStorageDexie(),
-      multiInstance: true,
-    });
-
-    await database.addCollections({
-      products: {
-        schema: productSchema,
-      },
-    });
-
-    setDatabase(database);
-  }, [setDatabase]);
-
   useEffect(() => {
+    const initDatabase = async () => {
+      const database = await createRxDatabase<Collections>({
+        name: "database",
+        storage: getRxStorageDexie(),
+        multiInstance: true,
+      });
+
+      await database.addCollections({
+        products: {
+          schema: productSchema,
+        },
+      });
+
+      const productNumber = await database.collections.products.count().exec();
+      if (productNumber === 0) {
+        for (const demoProduct of demoProducts) {
+          await database.collections.products.insert(demoProduct);
+        }
+      }
+
+      setDatabase(database);
+    };
+
     initDatabase();
-  }, [initDatabase]);
+  }, [setDatabase]);
 
   return (
     <DatabaseContext.Provider value={{ database }}>
