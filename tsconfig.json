@@ -19,7 +19,8 @@
       }
     ],
     "paths": {
-      "@swift-buy/database": ["./database/index.ts"]
+      "@swift-buy/database": ["./database/index.ts"],
+      "@swift-buy/ui-components": ["./ui-components/index.ts"],
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
