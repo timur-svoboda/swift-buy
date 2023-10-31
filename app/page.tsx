@@ -26,6 +26,7 @@ import {
   TableRow,
   TableCell,
   TableBody,
+  useTheme,
 } from "@mui/material";
 import { DatabaseContext, ProductDocument } from "@swift-buy/database";
 import {
@@ -48,6 +49,8 @@ import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 const PRODUCTS_PER_LOAD = 8;
 
 export default function Home() {
+  const theme = useTheme();
+
   const [searchQuery, setSearchQuery] = useState("");
 
   const { database } = useContext(DatabaseContext);
@@ -224,7 +227,7 @@ export default function Home() {
               );
 
               return (
-                <Grid item key={product.id} xs={3}>
+                <Grid item key={product.id} xs={12} sm={6} md={4} lg={3}>
                   <Card
                     sx={{
                       display: "flex",
@@ -235,7 +238,12 @@ export default function Home() {
                     <CardMedia>
                       <Box position="relative" width="100%">
                         <Box paddingTop="100%" />
-                        <Image src={product.image} alt="" fill sizes="25vw" />
+                        <Image
+                          src={product.image}
+                          alt=""
+                          fill
+                          sizes={`(min-width: ${theme.breakpoints.values.lg}px) 25vw, (min-width: ${theme.breakpoints.values.md}px) 33.33vw, (min-width: ${theme.breakpoints.values.md}px) 50vw, 100vw`}
+                        />
                       </Box>
                     </CardMedia>
                     <CardContent sx={{ flexGrow: 1 }}>
