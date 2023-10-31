@@ -300,8 +300,9 @@ export default function Home() {
         justifyContent="center"
         alignItems="center"
         pt="80px"
+        px="16px"
       >
-        <Typography variant="h2">Nothing found</Typography>
+        <Typography textAlign="center" variant="h3">Nothing found</Typography>
       </Box>
     );
   }
