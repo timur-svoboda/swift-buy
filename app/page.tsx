@@ -104,7 +104,7 @@ export default function Home() {
   );
 
   return (
-    <>
+    <Box sx={{ minHeight: "100vh", display: 'flex', flexDirection: "column" }}>
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
@@ -122,44 +122,57 @@ export default function Home() {
           </Search>
         </Toolbar>
       </AppBar>
-      <Box pt="32px" pb="32px">
-        <Container>
-          <Grid container spacing={2}>
-            {filtredProducts.map((product) => (
-              <Grid item key={product.id} xs={3}>
-                <Card
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    height: "100%",
-                  }}
-                >
-                  <CardMedia>
-                    <Box position="relative" width="100%">
-                      <Box paddingTop="100%" />
-                      <Image src={product.image} alt="" fill sizes="25vw" />
-                    </Box>
-                  </CardMedia>
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography variant="h5" component="div" gutterBottom>
-                      {...highlightSearchQuery(product.title)}
-                    </Typography>
-                    <Typography variant="body2" gutterBottom>
-                      {...highlightSearchQuery(product.description)}
-                    </Typography>
-                  </CardContent>
-                  <CardActions sx={{ justifyContent: "space-between" }}>
-                    <Typography variant="h5" component="div">
-                      ${product.price}
-                    </Typography>
-                    <Button variant="contained">Buy</Button>
-                  </CardActions>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </Container>
-      </Box>
-    </>
+      {filtredProducts.length ? (
+        <Box pt="32px" pb="32px">
+          <Container>
+            <Grid container spacing={2}>
+              {filtredProducts.map((product) => (
+                <Grid item key={product.id} xs={3}>
+                  <Card
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      height: "100%",
+                    }}
+                  >
+                    <CardMedia>
+                      <Box position="relative" width="100%">
+                        <Box paddingTop="100%" />
+                        <Image src={product.image} alt="" fill sizes="25vw" />
+                      </Box>
+                    </CardMedia>
+                    <CardContent sx={{ flexGrow: 1 }}>
+                      <Typography variant="h5" component="div" gutterBottom>
+                        {...highlightSearchQuery(product.title)}
+                      </Typography>
+                      <Typography variant="body2" gutterBottom>
+                        {...highlightSearchQuery(product.description)}
+                      </Typography>
+                    </CardContent>
+                    <CardActions sx={{ justifyContent: "space-between" }}>
+                      <Typography variant="h5" component="div">
+                        ${product.price}
+                      </Typography>
+                      <Button variant="contained">Buy</Button>
+                    </CardActions>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          </Container>
+        </Box>
+      ) : (
+        <Box
+          sx={{
+            flexGrow: 1,
+            display: 'flex',
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Typography variant="h2">Nothing found</Typography>
+        </Box>
+      )}
+    </Box>
   );
 }
