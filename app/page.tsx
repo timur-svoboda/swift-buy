@@ -34,9 +34,18 @@ import {
   SearchInput,
 } from "@swift-buy/ui-components";
 import Image from "next/image";
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
+
+const PRODUCTS_PER_LOAD = 8;
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -45,11 +54,16 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState<ProductDocument[]>([]);
   const [productsInCart, setProductsInCart] = useState<ProductDocument[]>([]);
+  const [skip, setSkip] = useState(0);
 
   useEffect(() => {
     const fetchProducts = async () => {
       if (database) {
-        const products = await database.collections.products.find().exec();
+        const products = await database.collections.products
+          .find()
+          .limit(PRODUCTS_PER_LOAD)
+          .exec();
+        setSkip(PRODUCTS_PER_LOAD);
         setProducts(products);
 
         const me = (await database.collections.me.find().exec())[0];
@@ -63,7 +77,7 @@ export default function Home() {
     };
 
     fetchProducts();
-  }, [database]);
+  }, [database, setSkip]);
 
   const trimmedSearchQuery = useMemo(() => searchQuery.trim(), [searchQuery]);
 
@@ -129,23 +143,79 @@ export default function Home() {
     [trimmedSearchQuery]
   );
 
+  const observerTarget = useRef(null);
+  const [noMorePosts, setNoMorePosts] = useState(false);
+  const [loadingMorePosts, setLoadingMorePosts] = useState(false);
+
+  useEffect(() => {
+    if (filtredProducts.length && !noMorePosts) {
+      const fetchMorePosts = async () => {
+        if (database) {
+          setLoadingMorePosts(true);
+
+          await new Promise((resolve) => setTimeout(() => resolve(null), 2000));
+
+          const moreProducts = await database.collections.products
+            .find()
+            .limit(PRODUCTS_PER_LOAD)
+            .skip(skip)
+            .exec();
+
+          setSkip(skip + PRODUCTS_PER_LOAD);
+          setProducts([...products, ...moreProducts]);
+          setNoMorePosts(moreProducts.length < 8);
+          setLoadingMorePosts(false);
+        }
+      };
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting) {
+            fetchMorePosts();
+          }
+        },
+        { threshold: 1 }
+      );
+
+      if (observerTarget.current) {
+        observer.observe(observerTarget.current);
+      }
+
+      const observerTargetCurrent = observerTarget.current;
+
+      return () => {
+        if (observerTargetCurrent) {
+          observer.unobserve(observerTargetCurrent);
+        }
+      };
+    }
+  }, [
+    database,
+    products,
+    setProducts,
+    skip,
+    setSkip,
+    noMorePosts,
+    setNoMorePosts,
+    filtredProducts,
+  ]);
+
   let main: React.ReactNode;
   if (loading) {
     main = (
       <Box
-        sx={{
-          flexGrow: 1,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
+        display="flex"
+        flexGrow={1}
+        justifyContent="center"
+        alignItems="center"
+        pt="80px"
       >
         <CircularProgress />
       </Box>
     );
   } else if (filtredProducts.length) {
     main = (
-      <Box pt="32px" pb="32px">
+      <Box pt="32px">
         <Container>
           <Grid container spacing={2}>
             {filtredProducts.map((product) => {
@@ -217,12 +287,11 @@ export default function Home() {
   } else {
     main = (
       <Box
-        sx={{
-          flexGrow: 1,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
+        display="flex"
+        flexGrow={1}
+        justifyContent="center"
+        alignItems="center"
+        pt="80px"
       >
         <Typography variant="h2">Nothing found</Typography>
       </Box>
@@ -327,9 +396,12 @@ export default function Home() {
                   <TableCell>Total</TableCell>
                   <TableCell></TableCell>
                   <TableCell></TableCell>
-                  <TableCell>${productsInCart.reduce((sum, product) => {
-                    return sum + product.price;
-                  }, 0)}</TableCell>
+                  <TableCell>
+                    $
+                    {productsInCart.reduce((sum, product) => {
+                      return sum + product.price;
+                    }, 0)}
+                  </TableCell>
                   <TableCell></TableCell>
                 </TableRow>
               </TableBody>
@@ -351,10 +423,14 @@ export default function Home() {
       <DialogActions>
         <Button onClick={() => setCartOpen(false)}>Close</Button>
         {!!productsInCart.length && (
-          <Button onClick={() => {
-            setCartOpen(false);
-            setNoCheckoutOpen(true);
-          }}>Checkout</Button>
+          <Button
+            onClick={() => {
+              setCartOpen(false);
+              setNoCheckoutOpen(true);
+            }}
+          >
+            Checkout
+          </Button>
         )}
       </DialogActions>
     </Dialog>
@@ -402,6 +478,15 @@ export default function Home() {
       </AppBar>
       <Toolbar />
       {main}
+      <Box
+        ref={observerTarget}
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="80px"
+      >
+        {loadingMorePosts && <CircularProgress />}
+      </Box>
     </Box>
   );
 }
