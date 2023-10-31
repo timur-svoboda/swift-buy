@@ -47,15 +47,22 @@ export default function Home() {
   const [productsInCart, setProductsInCart] = useState<ProductDocument[]>([]);
 
   useEffect(() => {
-    const fetchProcuts = async () => {
+    const fetchProducts = async () => {
       if (database) {
         const products = await database.collections.products.find().exec();
         setProducts(products);
+
+        const me = (await database.collections.me.find().exec())[0];
+        const productsInCart: ProductDocument[] = await me.populate(
+          "productsInCart"
+        );
+        setProductsInCart(productsInCart);
+
         setLoading(false);
       }
     };
 
-    fetchProcuts();
+    fetchProducts();
   }, [database]);
 
   const trimmedSearchQuery = useMemo(() => searchQuery.trim(), [searchQuery]);
@@ -177,8 +184,22 @@ export default function Home() {
                         <Button
                           variant="contained"
                           disabled={isInCart}
-                          onClick={() => {
-                            setProductsInCart([...productsInCart, product]);
+                          onClick={async () => {
+                            if (database) {
+                              const me = (
+                                await database.collections.me.find().exec()
+                              )[0];
+
+                              await me.modify((doc) => {
+                                doc.productsInCart = [
+                                  ...doc.productsInCart,
+                                  product.id,
+                                ];
+                                return doc;
+                              });
+
+                              setProductsInCart([...productsInCart, product]);
+                            }
                           }}
                         >
                           {isInCart ? "Added to cart" : "Add to cart"}
@@ -272,10 +293,28 @@ export default function Home() {
                     <TableCell>${product.price}</TableCell>
                     <TableCell>
                       <IconButton
-                        onClick={() => {
-                          setProductsInCart(
-                            productsInCart.filter(({ id }) => id !== product.id)
-                          );
+                        onClick={async () => {
+                          if (database) {
+                            const me = (
+                              await database.collections.me.find().exec()
+                            )[0];
+
+                            const productsInCart: ProductDocument[] =
+                              await me.populate("productsInCart");
+
+                            await me.modify((doc) => {
+                              doc.productsInCart = doc.productsInCart.filter(
+                                (id) => id !== product.id
+                              );
+                              return doc;
+                            });
+
+                            setProductsInCart(
+                              productsInCart.filter(
+                                ({ id }) => id !== product.id
+                              )
+                            );
+                          }
                         }}
                       >
                         <RemoveCircleIcon />
@@ -310,7 +349,7 @@ export default function Home() {
 
   return (
     <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-      <AppBar position="static">
+      <AppBar>
         <Toolbar>
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
             SwiftBuy
@@ -329,6 +368,7 @@ export default function Home() {
           {cartDialog}
         </Toolbar>
       </AppBar>
+      <Toolbar />
       {main}
     </Box>
   );

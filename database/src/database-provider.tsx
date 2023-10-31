@@ -6,6 +6,7 @@ import { productSchema } from "./schemas/product-schema";
 import { Collections, Database } from "./types";
 import { generateId } from "./utils/generate-id";
 import { demoProducts } from "./demo-data";
+import { meSchema } from "./schemas/me-schema";
 
 export interface DatabaseProviderProps {
   children?: React.ReactNode;
@@ -28,6 +29,9 @@ export const DatabaseProvider = (props: DatabaseProviderProps) => {
         products: {
           schema: productSchema,
         },
+        me: {
+          schema: meSchema,
+        },
       });
 
       const productNumber = await database.collections.products.count().exec();
@@ -35,6 +39,14 @@ export const DatabaseProvider = (props: DatabaseProviderProps) => {
         for (const demoProduct of demoProducts) {
           await database.collections.products.insert(demoProduct);
         }
+      }
+
+      const meNumber = await database.collections.me.count().exec();
+      if (meNumber === 0) {
+        await database.collections.me.insert({
+          id: generateId(),
+          productsInCart: [],
+        });
       }
 
       setDatabase(database);

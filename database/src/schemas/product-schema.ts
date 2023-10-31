@@ -1,8 +1,6 @@
-import { RxJsonSchema } from "rxdb";
-import { ProductDocType } from "../types";
 
-export const productSchema: RxJsonSchema<ProductDocType> = {
-  title: "Product",
+export const productSchema = {
+  title: "product",
   version: 0,
   primaryKey: "id",
   type: "object",
@@ -24,5 +22,5 @@ export const productSchema: RxJsonSchema<ProductDocType> = {
       type: "number",
     },
   },
-  required: ["id", "title", "description", "price"],
-};
+  required: ["id", "image", "title", "description", "price"],
+} as const;
