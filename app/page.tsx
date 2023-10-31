@@ -466,9 +466,11 @@ export default function Home() {
     <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <AppBar>
         <Toolbar>
-          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            SwiftBuy
-          </Typography>
+          <Box sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}>
+            <Typography variant="h6" noWrap component="div">
+              SwiftBuy
+            </Typography>
+          </Box>
           <Search sx={{ marginRight: 4 }}>
             <SearchIconWrapper>
               <SearchIcon />
