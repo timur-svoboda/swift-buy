@@ -323,6 +323,15 @@ export default function Home() {
                     </TableCell>
                   </TableRow>
                 ))}
+                <TableRow>
+                  <TableCell>Total</TableCell>
+                  <TableCell></TableCell>
+                  <TableCell></TableCell>
+                  <TableCell>${productsInCart.reduce((sum, product) => {
+                    return sum + product.price;
+                  }, 0)}</TableCell>
+                  <TableCell></TableCell>
+                </TableRow>
               </TableBody>
             </Table>
           </TableContainer>
