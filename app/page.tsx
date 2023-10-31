@@ -27,6 +27,7 @@ import {
   TableCell,
   TableBody,
   useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import { DatabaseContext, ProductDocument } from "@swift-buy/database";
 import {
@@ -302,7 +303,9 @@ export default function Home() {
         pt="80px"
         px="16px"
       >
-        <Typography textAlign="center" variant="h3">Nothing found</Typography>
+        <Typography textAlign="center" variant="h3">
+          Nothing found
+        </Typography>
       </Box>
     );
   }
@@ -335,23 +338,30 @@ export default function Home() {
     </IconButton>
   );
 
+  const fullScreenCartDialog = useMediaQuery(theme.breakpoints.down("sm"));
+
   const cartDialog = (
     <Dialog
       open={cartOpen}
       onClose={() => setCartOpen(false)}
       maxWidth="md"
       fullWidth
+      fullScreen={fullScreenCartDialog}
     >
       <DialogTitle>Cart</DialogTitle>
-      <DialogContent>
+      <DialogContent sx={{ display: "flex", flexDirection: "column" }}>
         {productsInCart.length ? (
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Image</TableCell>
+                  <TableCell sx={{ display: { xs: "none", sm: "table-cell" } }}>
+                    Image
+                  </TableCell>
                   <TableCell>Title</TableCell>
-                  <TableCell>Description</TableCell>
+                  <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>
+                    Description
+                  </TableCell>
                   <TableCell>Price</TableCell>
                   <TableCell></TableCell>
                 </TableRow>
@@ -359,7 +369,9 @@ export default function Home() {
               <TableBody>
                 {productsInCart.map((product) => (
                   <TableRow key={product.id}>
-                    <TableCell>
+                    <TableCell
+                      sx={{ display: { xs: "none", sm: "table-cell" } }}
+                    >
                       <Image
                         src={product.image}
                         alt=""
@@ -368,7 +380,11 @@ export default function Home() {
                       />
                     </TableCell>
                     <TableCell>{product.title}</TableCell>
-                    <TableCell>{product.description}</TableCell>
+                    <TableCell
+                      sx={{ display: { xs: "none", md: "table-cell" } }}
+                    >
+                      {product.description}
+                    </TableCell>
                     <TableCell>${product.price}</TableCell>
                     <TableCell>
                       <IconButton
@@ -403,8 +419,12 @@ export default function Home() {
                 ))}
                 <TableRow>
                   <TableCell>Total</TableCell>
-                  <TableCell></TableCell>
-                  <TableCell></TableCell>
+                  <TableCell
+                    sx={{ display: { xs: "none", sm: "table-cell" } }}
+                  ></TableCell>
+                  <TableCell
+                    sx={{ display: { xs: "none", md: "table-cell" } }}
+                  ></TableCell>
                   <TableCell>
                     $
                     {productsInCart.reduce((sum, product) => {
@@ -417,7 +437,15 @@ export default function Home() {
             </Table>
           </TableContainer>
         ) : (
-          <Box pt="32px" pb="32px">
+          <Box
+            sx={{
+              py: "32px",
+              flexGrow: 1,
+              display: 'flex',
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
             <Typography
               component="div"
               variant="h4"
