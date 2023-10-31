@@ -230,6 +230,7 @@ export default function Home() {
   }
 
   const [cartOpen, setCartOpen] = useState(false);
+  const [noCheckoutOpen, setNoCheckoutOpen] = useState(false);
 
   const cartButton = (
     <IconButton
@@ -341,8 +342,29 @@ export default function Home() {
       <DialogActions>
         <Button onClick={() => setCartOpen(false)}>Close</Button>
         {!!productsInCart.length && (
-          <Button onClick={() => setCartOpen(false)}>Checkout</Button>
+          <Button onClick={() => {
+            setCartOpen(false);
+            setNoCheckoutOpen(true);
+          }}>Checkout</Button>
         )}
+      </DialogActions>
+    </Dialog>
+  );
+
+  const noCheckoutAlert = (
+    <Dialog open={noCheckoutOpen} onClose={() => setNoCheckoutOpen(false)}>
+      <DialogTitle>No Checkout</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          This web application is designed for demonstration purposes and does
+          not function as a genuine e-commerce store. As a result, it does not
+          feature a checkout process.
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={() => setNoCheckoutOpen(false)} autoFocus>
+          Close
+        </Button>
       </DialogActions>
     </Dialog>
   );
@@ -366,6 +388,7 @@ export default function Home() {
           </Search>
           {cartButton}
           {cartDialog}
+          {noCheckoutAlert}
         </Toolbar>
       </AppBar>
       <Toolbar />
