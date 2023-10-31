@@ -1,0 +1,81 @@
+import { generateId } from "./utils/generate-id";
+
+export const demoProducts = [
+  {
+    id: generateId(),
+    image: "/images/bag.png",
+    title: "Bag",
+    description: "A stylish and versatile accessory designed for carrying personal belongings, available in various sizes, materials, and designs to complement different lifestyles and needs.",
+    price: 500,
+  },
+  {
+    id: generateId(),
+    image: "/images/boot.png",
+    title: "Boots",
+    description: "Footwear that offers both fashion and function, providing support, protection, and style, available in a range of materials and designs suitable for various weather conditions and occasions.",
+    price: 50,
+  },
+  {
+    id: generateId(),
+    image: "/images/camera.png",
+    title: "Camera",
+    description: "A device used to capture still or moving images, available in different types such as DSLRs, mirrorless, and compact cameras, enabling users to preserve memories or create artistic visuals.",
+    price: 1000,
+  },
+  {
+    id: generateId(),
+    image: "/images/chair.png",
+    title: "Chair",
+    description: "A functional piece of furniture designed for sitting, available in various styles and materials, providing comfort and support for different settings such as offices, homes, or public spaces.",
+    price: 50,
+  },
+  {
+    id: generateId(),
+    image: "/images/coffee.png",
+    title: "Coffee",
+    description: "A popular beverage made from roasted and ground coffee beans, offering a rich and diverse range of flavors, enjoyed worldwide in various forms like espresso, cappuccino, or cold brew.",
+    price: 20,
+  },
+  {
+    id: generateId(),
+    image: "/images/earphones.png",
+    title: "Earphones",
+    description: "Small audio devices worn in or over the ears, providing a personalized listening experience for music, podcasts, or calls, available in wired or wireless options with varying features.",
+    price: 300,
+  },
+  {
+    id: generateId(),
+    image: "/images/glass.png",
+    title: "Glass",
+    description: "A versatile container typically made of glass material, used for holding liquids or displaying decorative items, available in different shapes, sizes, and styles.",
+    price: 50,
+  },
+  {
+    id: generateId(),
+    image: "/images/pepsi.png",
+    title: "Pepsi",
+    description: "A carbonated soft drink known for its sweet and refreshing taste, offering various flavors and options, serving as a popular beverage choice globally.",
+    price: 2,
+  },
+  {
+    id: generateId(),
+    image: "/images/perfume.png",
+    title: "Perfume",
+    description: "A scented liquid designed for personal fragrance, available in a variety of captivating scents and concentrations, used to enhance one's personal aroma.",
+    price: 200,
+  },
+  {
+    id: generateId(),
+    image: "/images/sunglasses.png",
+    title: "Sunglasses",
+    description: "Protective eyewear designed to shield the eyes from sunlight and glare, available in diverse styles and lens types, serving both fashion and functional purposes.",
+    price: 10,
+  },
+  {
+    id: generateId(),
+    image: "/images/watch.png",
+    title: "Watch",
+    description: "A timekeeping device worn on the wrist, available in analog or digital forms, offering various features and styles as a functional accessory or fashion statement.",
+    price: 1000,
+  },
+];
